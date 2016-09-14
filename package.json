@@ -1,0 +1,14 @@
+{
+  "scripts": {
+    "start": "node src/upload.js"
+  },
+  "dependencies": {
+    "dotenv": "^2.0.0",
+    "jsftp": "^1.5.3",
+    "moment": "^2.15.0",
+    "momentjs": "^1.1.15",
+    "mysql": "^2.11.1",
+    "node-parallel": "^0.1.6",
+    "request": "^2.74.0"
+  }
+}
