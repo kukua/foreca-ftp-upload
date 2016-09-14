@@ -1,0 +1,4 @@
+upload:
+    build: .
+    env_file:
+        - .env

@@ -1,0 +1,1 @@
+33 */2 * * * ubuntu cd /home/ubuntu/data/foreca-ftp-upload && /usr/local/bin/docker-compose up upload
