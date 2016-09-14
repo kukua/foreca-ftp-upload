@@ -1,3 +1,4 @@
+const fs = require('fs')
 const dotenv = require('dotenv')
 const moment = require('moment')
 const request = require('request')
@@ -96,6 +97,11 @@ request({
 		}
 
 		var data = buildData(results)
+		var timestamp = start.format('X')
+
+		// Log data
+		fs.writeFileSync('/tmp/metadata.' + timestamp + '.tsv', metadata, { encoding: 'ASCII' })
+		fs.writeFileSync('/tmp/data.' + timestamp + '.csv', data, { encoding: 'ASCII' })
 
 		// Upload (meta)data over FTP
 		var ftp = new FTP({
@@ -116,7 +122,7 @@ request({
 				process.exit(1)
 			}
 
-			ftp.put(data, 'data' + start.format('X') + '.txt', (err) => {
+			ftp.put(data, 'data' + timestamp + '.txt', (err) => {
 				if (err) {
 					console.error('Error uploading data:', err)
 					process.exit(1)
@@ -157,8 +163,10 @@ function buildData (results) {
 
 	Object.keys(results).forEach((udid) => {
 		results[udid].forEach((row) => {
+			var solarRad = (typeof row.solarRad !== undefined ? row.solarRad : row.maxSolar1)
+
 			data += `${udid},${row.timestamp},${row.rain},${row.windSpeed},${row.gustSpeed},${row.windDir},` +
-				`${row.gustDir},${row.solarRad || row.maxSolar1},${row.temp},${row.humid},${row.pressure}\n`
+				`${row.gustDir},${solarRad},${row.temp},${row.humid},${row.pressure}\n`
 		})
 	})
 
