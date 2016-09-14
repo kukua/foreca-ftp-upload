@@ -9,7 +9,9 @@ const FTP = require('jsftp')
 // Configuration
 dotenv.config()
 
-var stop = moment(process.argv[2] || Math.floor(Date.now() / 1000))
+var debugMode = !! process.env['DEBUG']
+
+var stop = moment(process.argv[2] || Date.now())
 var range = parseInt(process.argv[3]) || (4 * 60 * 60)
 
 if ( ! stop.isValid()) {
@@ -92,7 +94,7 @@ request({
 		}
 
 		var data = buildData(results)
-		var timestamp = start.format('X')
+		var timestamp = stop.format('X')
 
 		// Log data
 		fs.writeFileSync('/tmp/metadata.' + timestamp + '.tsv', metadata, { encoding: 'ASCII' })
@@ -104,12 +106,12 @@ request({
 			port: 21,
 			user: process.env['FTP_USER'],
 			pass: process.env['FTP_PASSWORD'],
-			debugMode: true,
+			debugMode,
 		})
 
-//		ftp.on('jsftp_debug', (type, ev) => {
-//			console.info('FTP debug type(%s):', ev)
-//		})
+		ftp.on('jsftp_debug', (type, ev) => {
+			console.info('FTP debug', type, ev)
+		})
 
 		ftp.put(metadata, 'metadata.txt', (err) => {
 			if (err) {
@@ -132,6 +134,8 @@ request({
 
 function buildMetadata (devices) {
 	var data = 'ID\tlon\tlat\taltitude_m\tlocal_time\tcountry\tname\n'
+
+	if (debugMode) console.log('Devices:', devices)
 
 	devices.forEach((device) => {
 		var labels = getLabels(device)
@@ -158,7 +162,7 @@ function buildData (results) {
 
 	Object.keys(results).forEach((udid) => {
 		results[udid].forEach((row) => {
-			var solarRad = (typeof row.solarRad !== undefined ? row.solarRad : row.maxSolar1)
+			var solarRad = (row.solarRad !== undefined ? row.solarRad : row.maxSolar1)
 
 			data += `${udid},${row.timestamp},${row.rain},${row.windSpeed},${row.gustSpeed},${row.windDir},` +
 				`${row.gustDir},${solarRad},${row.temp},${row.humid},${row.pressure}\n`

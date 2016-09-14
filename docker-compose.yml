@@ -1,4 +1,7 @@
 upload:
     build: .
-    env_file:
-        - .env
+    env_file: .env
+    volumes:
+        - ./logs/:/tmp/
+    external_links:
+        - concavasetupmysqlmqtt_mariadb_1:mysql
