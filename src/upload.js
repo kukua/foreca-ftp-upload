@@ -9,13 +9,8 @@ const FTP = require('jsftp')
 // Configuration
 dotenv.config()
 
-if (process.argv.length !== 4) {
-	console.error('Usage: npm start -- \'2016-09-14T14:22:00Z (end date)\' 3600')
-	process.exit(1)
-}
-
-var stop = moment(process.argv[2])
-var range = parseInt(process.argv[3])
+var stop = moment(process.argv[2] || Math.floor(Date.now() / 1000))
+var range = parseInt(process.argv[3]) || (4 * 60 * 60)
 
 if ( ! stop.isValid()) {
 	console.error('Invalid end date given!')
