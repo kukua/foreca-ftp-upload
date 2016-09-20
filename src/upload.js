@@ -12,7 +12,7 @@ dotenv.config()
 var debugMode = !! process.env['DEBUG']
 
 var stop = moment(process.argv[2] || Date.now())
-var range = parseInt(process.argv[3]) || (4 * 60 * 60)
+var range = parseInt(process.argv[3]) || (0.5 * 60 * 60)
 
 if ( ! stop.isValid()) {
 	console.error('Invalid end date given!')
