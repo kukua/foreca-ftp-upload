@@ -7,8 +7,7 @@ const parallel = require('node-parallel')
 const FTP = require('jsftp')
 
 // Configuration
-dotenv.config()
-
+dotenv.config() 
 var debugMode = !! process.env['DEBUG']
 
 var stop = moment(process.argv[2] || Date.now())
@@ -144,6 +143,8 @@ function buildMetadata (devices) {
 			`${labels.altitude}\t${labels.timezone}\t${labels.country}\t${device.name}\n`
 	})
 
+	data = data.replace(/null/g, '').replace(/undefined/g, '')
+
 	return new Buffer(data, 'ASCII')
 }
 
@@ -168,6 +169,8 @@ function buildData (results) {
 				`${row.gustDir},${solarRad},${row.temp},${row.humid},${row.pressure}\n`
 		})
 	})
+
+	data = data.replace(/null/g, '').replace(/undefined/g, '')
 
 	return new Buffer(data, 'ASCII')
 }
